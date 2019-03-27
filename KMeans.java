@@ -38,6 +38,12 @@ public class KMeans {
             int prev[] = new int[row_cnt];
             int count[] = new int[k];
 
+            this.cluster_c = cluster_c;
+            this.prev = prev;
+            this.cluster = cluster;
+            this.points = points;
+            this.count = count;
+
             //initialising and printing data points
             System.out.println("Data Points: ");
             rs=st.executeQuery(sql);
