@@ -39,13 +39,6 @@ public class KMedoid {
             int count[] = new int[k];
             int centroid[] = new int[k];
 
-            this.cluster_c = cluster_c;
-            this.prev = prev;
-            this.cluster = cluster;
-            this.points = points;
-            this.count = count;
-            this.centroid = centroid;
-
             //initialising and printing data points
             System.out.println("Data Points: ");
             rs=st.executeQuery(sql);
