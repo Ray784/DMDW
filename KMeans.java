@@ -4,8 +4,8 @@ import java.util.*;
 import java.sql.*;
 
 public class KMeans {
-    float cluster_c[][],points[][],centroid[][];
-    int cluster[], count[];
+    float cluster_c[][],points[][];
+    int cluster[], count[], prev[];
     KMeans(){
         try{
             int row_cnt=0,col_cnt=0,k,row=0,col=0,iter=0;
@@ -33,13 +33,13 @@ public class KMeans {
             Scanner in = new Scanner(System.in);
             System.out.print("enter k value: ");
             k = in.nextInt();
-            float centroid[][] = new float[k][col_cnt];
             float cluster_c[][] = new float[k][col_cnt];
             int cluster[] = new int[row_cnt];
+            int prev[] = new int[row_cnt];
             int count[] = new int[k];
 
-            this.centroid = centroid;
             this.cluster_c = cluster_c;
+            this.prev = prev;
             this.cluster = cluster;
             this.points = points;
             this.count = count;
@@ -59,20 +59,19 @@ public class KMeans {
             //k random centroids(first k data points)
             for(int i=0;i<k;i++){
                 for(int j=0;j<col_cnt;j++){
-                    centroid[i][j] = points[i][j];
+                    cluster_c[i][j] = points[i][j];
                 }
             }
 
             //iterations
             iter=1;
             makeCluster(iter,k,row_cnt,col_cnt);
-            while(centroid_chk(k,col_cnt) != 1){
+            while(cluster_chk(k,row_cnt) != 1){
                 iter++;
-                for(int i=0;i<k;i++)
-                    for(int j=0;j<col_cnt;j++)
-                        centroid[i][j] = cluster_c[i][j];
-                }
+                for(int i=0;i<row_cnt;i++)
+                    prev[i] = cluster[i];
                 makeCluster(iter,k,row_cnt,col_cnt);   
+            }
         }
         catch(Exception e){
             e.printStackTrace();
@@ -88,7 +87,7 @@ public class KMeans {
             int min_c=-1;
             float p1[] = points[i];
             for(int j=0;j<k;j++){
-                float p2[] = centroid[j];
+                float p2[] = cluster_c[j];
                 float distance = dist(col_cnt,p1,p2);
                 if(min > distance)
                 {
@@ -105,6 +104,11 @@ public class KMeans {
 
     //find the centroids for each cluster
     public void findClusterC(int cnt, int col_cnt, int row_cnt){
+        for(int k=0; k<cnt; k++){
+            for(int j=0;j<col_cnt;j++){
+                cluster_c[k][j] = 0;
+            }
+        }
         for(int k=0; k<cnt; k++){
             count[k] = 0;
             for(int i=0;i<row_cnt;i++){
@@ -141,12 +145,11 @@ public class KMeans {
         return (float)Math.sqrt(sum);
     }
 
-    //check centroids for 2 successive iterations
-    public int centroid_chk(int k,int col_cnt){
-        for(int i=0;i<k;i++)
-            for(int j=0;j<col_cnt;j++)
-                if(centroid[i][j]!=cluster_c[i][j])
-                    return 0;
+    //check clusters for 2 successive iterations
+    public int cluster_chk(int k,int row_cnt){
+        for(int i=0;i<row_cnt;i++)
+            if(prev[i]!=cluster[i])
+                return 0;
         return 1;
     }
 
